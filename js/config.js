@@ -1,0 +1,97 @@
+(function () {
+  var SECRET = 'AHMEDENC2026!';
+
+  function b64decode(str) {
+    if (typeof atob === 'function') return atob(str);
+    var bin = '';
+    var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+    str = str.replace(/=+$/, '');
+    for (var i = 0; i < str.length; i += 4) {
+      var c1 = chars.indexOf(str[i]);
+      var c2 = chars.indexOf(str[i + 1]);
+      var c3 = chars.indexOf(str[i + 2]);
+      var c4 = chars.indexOf(str[i + 3]);
+      bin += String.fromCharCode((c1 << 2) | (c2 >> 4));
+      if (c3 !== -1) bin += String.fromCharCode(((c2 & 15) << 4) | (c3 >> 2));
+      if (c4 !== -1) bin += String.fromCharCode(((c3 & 3) << 6) | c4);
+    }
+    return bin;
+  }
+
+  function decode(enc) {
+    var key = [];
+    for (var j = 0; j < SECRET.length; j++) key.push(SECRET.charCodeAt(j));
+    var raw = b64decode(enc);
+    var out = [];
+    for (var i = 0; i < raw.length; i++) {
+      out.push(String.fromCharCode(raw.charCodeAt(i) ^ key[i % key.length]));
+    }
+    return out.join('');
+  }
+
+  var SUPABASE_URL = decode('KTw5NTd/YWxVV1VMSCQ/NCA1NiA2W0hFXlcuLWM2MTUvIVNDVxhCLg==');
+  var SUPABASE_KEY = decode('JDEHLSYCLSp9WXh/dDsBfAstDD0KXGIHVWIIfgQuNB0YAHgJHFNYCzgudgksASp4SlZuYykRIAM+Hx0KQXlcfE0bIQRzDSgqLWgDQkZ7GSx4HxwDNCFcZkJTaSUnKSh9KQcqRVlRWxgyEh4McgwjBUdSAAJIDQsHNR0dHyp9WncFbgUrNAoQEDcMdltBf0wXfC4GDXMDKXdHf1xGcgUZDHAKFnMcSXBybjV6YCQQDngHSEZ5AGYxOzgoFR17LWh9VwJoAj8cMQYoGSJASEtlbA==');
+
+  window.APP_CONFIG = {
+    supabase: {
+      url: SUPABASE_URL,
+      anonKey: SUPABASE_KEY
+    },
+    cal: {
+      base: "https://cal.com",
+      username: "ahmed-ghaith-fbjoax",
+      trialEvent: "30min-trial",
+      lessonEvent: "30min",
+      lessonEvent60: "60min",
+      dashboardUrl: "https://cal.com/ahmed-ghaith-fbjoax"
+    },
+    stripe: {
+      starterPaymentLink: "https://book.stripe.com/5kQaEW6WKeUi3J51hKgrS09",
+      progressPaymentLink: "https://book.stripe.com/cNieVcch43bAgvR4tWgrS0a",
+      intensivePaymentLink: "https://book.stripe.com/cNi8wO94SeUi0wT6C4grS0b",
+      checkoutUrl: "https://gggziewyeqsnuixwhvoe.supabase.co/functions/v1/create-checkout",
+      dashboardUrl: "https://dashboard.stripe.com"
+    },
+    booking: {
+      // Non-secret booking config. CAL_API_KEY lives only in the Supabase
+      // Edge Function secrets, never here (it must not be exposed publicly).
+      username: "ahmed-ghaith-fbjoax",
+      evtTrial: "30min-trial",
+      evt30: "30min",
+      evt60: "60min",
+      durationMinutes: { "30min-trial": 30, "30min": 30, "60min": 60 },
+      functionUrl: "https://gggziewyeqsnuixwhvoe.supabase.co/functions/v1/book-lesson",
+      chatUrl: "https://gggziewyeqsnuixwhvoe.supabase.co/functions/v1/chat",
+      contactUrl: "https://gggziewyeqsnuixwhvoe.supabase.co/functions/v1/contact"
+    },
+    story: {},
+    referral: {
+      // Google Sheets answer: paste the Apps Script Web App URL here (deploy as
+      // "Anyone" web app) to record referrals in your spreadsheet. Leave blank
+      // and referrals are stored in the Supabase `referrals` table instead.
+      // The ready-to-paste script lives in referral-sheets-apps-script.gs.
+      sheetUrl: "https://script.google.com/macros/s/AKfycbwCfaEb3f4CYQQdY24AYVMHR0iuTmDI-_hrkFZIwTEhtpOCBWlTKTtd6Qr006qtDw/exec",
+      // Full edit URL of the connected spreadsheet (a "__/docs" link). Paste it
+      // and the Admin console shows an "Open spreadsheet" shortcut.
+      spreadsheetUrl: "https://docs.google.com/spreadsheets/d/10JpUPwUXABOYfbrgjNatbVY0bCMIAGHyGwFFuunwgIE/edit?gid=0#gid=0",
+      url: "https://www.proenglishtutor.online/referral.html"
+    },
+    adsense: {
+      // Owner can paste these here OR via the Dashboard > Ads control tab.
+      client: "7286796230795532",
+      // per-zone slot ids (types & locations):
+      // { banner(header), in-content(in article), in-article(article body), sidebar, footer, mobile }
+      // NOTE: slot ids (data-ad-slot) still need to be created in AdSense and pasted in the
+      // Dashboard > Ads control tab before units render. Client-only zones show a placeholder.
+      slots: { banner: "", "in-content": "", "in-article": "", sidebar: "", footer: "", mobile: "" },
+      // zones turned on by default (boolean)
+      zones: { banner: true, "in-content": true, "in-article": true, sidebar: true, footer: true, mobile: true },
+      // per-zone AdSense ad format (data-ad-format value): auto | horizontal | vertical | rectangle | fluid
+      formats: { banner: "auto", "in-content": "auto", "in-article": "auto", sidebar: "auto", footer: "auto", mobile: "auto" },
+      // visitor tracking on/off
+      tracking: true
+    },
+    drive: "https://drive.google.com",
+    contactEmail: "ahmedashrafgeith@gmail.com"
+  };
+})();
